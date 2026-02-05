@@ -6,15 +6,23 @@ if [ -z "$TAILSCALE_AUTHKEY" ]; then
   exit 1
 fi
 
-# Start tailscaled (userspace mode, no /dev/net/tun needed)
-tailscaled --state=/tmp/tailscale.state --socket=/tmp/tailscale.sock &
+# Start tailscaled in userspace mode (no /dev/net/tun needed)
+tailscaled \
+  --tun=userspace-networking \
+  --state=/tmp/tailscale.state \
+  --socket=/tmp/tailscale.sock \
+  &
+
+# Give it a moment
 sleep 2
 
-# Bring up Tailscale
+# Bring the network up without trying to touch iptables
 tailscale --socket=/tmp/tailscale.sock up \
-  --authkey="$TAILSCALE_AUTHKEY" \
+  --auth-key="$TAILSCALE_AUTHKEY" \
   --hostname="render-whatsapp-webhook" \
-  --tun=userspace-networking
+  --netfilter-mode=off \
+  --accept-dns=false \
+  --reset
 
 # Start your node server
 node server.js

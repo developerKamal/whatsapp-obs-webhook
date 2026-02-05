@@ -4,13 +4,14 @@ import OBSWebSocket from "obs-websocket-js";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // ===== CONFIG =====
-const OBS_TAILSCALE_IP = process.env.OBS_IP;        // 100.x.x.x
-const OBS_PASSWORD = process.env.OBS_PASSWORD;     // OBS websocket wachtwoord
+const OBS_HOST = "ws://127.0.0.1:4455";
+const OBS_PASSWORD = process.env.OBS_PASSWORD;
 
 const ALLOWED = new Set([
-  "whatsapp:+316XXXXXXXX"
+  "whatsapp:+31685277695"
 ]);
 
 const MAP = {
@@ -26,9 +27,8 @@ const MAP = {
 const obs = new OBSWebSocket();
 
 async function connectObs() {
-  if (!obs.identified) {
-    await obs.connect(`ws://${OBS_TAILSCALE_IP}:4455`, OBS_PASSWORD);
-  }
+  if (obs.identified) return;
+  await obs.connect(OBS_HOST, OBS_PASSWORD);
 }
 
 app.post("/twilio", async (req, res) => {
@@ -71,5 +71,6 @@ app.get("/test-obs", async (_req, res) => {
   }
 });
 
-
-app.listen(3000);
+app.listen(3000, () => {
+  console.log("Webhook running on http://localhost:3000");
+});

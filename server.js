@@ -61,4 +61,15 @@ app.post("/twilio", async (req, res) => {
 });
 
 app.get("/", (_req, res) => res.send("OK"));
+
+app.get("/test-obs", async (_req, res) => {
+  try {
+    await connectObs();
+    res.send("OBS CONNECT OK");
+  } catch (e) {
+    res.status(500).send("OBS CONNECT FAIL: " + e.message);
+  }
+});
+
+
 app.listen(3000);

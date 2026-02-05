@@ -1,0 +1,9 @@
+{
+  "name": "whatsapp-obs-webhook",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "obs-websocket-js": "^5.0.6"
+  }
+}
